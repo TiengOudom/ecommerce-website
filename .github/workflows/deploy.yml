@@ -28,7 +28,6 @@ jobs:
           port: 22
           proxy_host: consist-advantages-accomplished-shame.trycloudflare.com
           proxy_port: 443
-          proxy_ssh: true
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/ecommerce-website:latest
             docker stop ecommerce-website || true
