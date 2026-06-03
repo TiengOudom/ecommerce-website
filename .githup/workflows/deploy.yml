@@ -19,15 +19,24 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/ecommerce-website:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/ecommerce-website:latest
 
+      - name: Install cloudflared
+        run: |
+          curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
+          sudo mv cloudflared /usr/local/bin/
+          sudo chmod +x /usr/local/bin/cloudflared
+
       - name: Deploy to Server via SSH
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/ecommerce-website:latest
-            docker stop ecommerce-website  true
-            docker rm ecommerce-website  true
-            docker run -d -p 80:80 --name ecommerce-website \
-              ${{ secrets.DOCKER_USERNAME }}/ecommerce-website:latest
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh -o StrictHostKeyChecking=no \
+              -o ProxyCommand="cloudflared access ssh --hostname textbook-card-prevent-blink.trycloudflare.com" \
+              -i ~/.ssh/id_ed25519 \
+              ${{ secrets.SERVER_USER }}@textbook-card-prevent-blink.trycloudflare.com \
+              "docker pull ${{ secrets.DOCKER_USERNAME }}/ecommerce-website:latest && \
+               docker stop ecommerce-website  true && \
+               docker rm ecommerce-website  true && \
+               docker run -d -p 8080:80 --name ecommerce-website ${{ secrets.DOCKER_USERNAME }}/ecommerce-website:latest"
