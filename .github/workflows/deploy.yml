@@ -39,4 +39,4 @@ jobs:
               "docker pull ${{ secrets.DOCKER_USERNAME }}/ecommerce-website:latest && \
                docker stop ecommerce-website || true && \
                docker rm ecommerce-website || true && \
-               docker run -d -p 80:80 --name ecommerce-website ${{ secrets.DOCKER_USERNAME }}/ecommerce-website:latest"
+               docker run -d -p 8080:80 --name ecommerce-website ${{ secrets.DOCKER_USERNAME }}/ecommerce-website:latest"
