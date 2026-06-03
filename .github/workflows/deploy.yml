@@ -33,9 +33,9 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh -o StrictHostKeyChecking=no \
-              -o ProxyCommand="cloudflared access ssh --hostname consist-advantages-accomplished-shame.trycloudflare.com" \
+              -o ProxyCommand="cloudflared access ssh --hostname textbook-card-prevent-blink.trycloudflare.com" \
               -i ~/.ssh/id_ed25519 \
-              ${{ secrets.SERVER_USER }}@consist-advantages-accomplished-shame.trycloudflare.com \
+              ${{ secrets.SERVER_USER }}@textbook-card-prevent-blink.trycloudflare.com \
               "docker pull ${{ secrets.DOCKER_USERNAME }}/ecommerce-website:latest && \
                docker stop ecommerce-website || true && \
                docker rm ecommerce-website || true && \
